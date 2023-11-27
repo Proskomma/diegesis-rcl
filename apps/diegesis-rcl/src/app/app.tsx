@@ -6,7 +6,7 @@ import NxWelcome from './nx-welcome';
 export function App() {
   return (
     <div>
-      <NxWelcome title="diegesis-rcl" />
+      <NxWelcome title="bouquet-picker" />
     </div>
   );
 }

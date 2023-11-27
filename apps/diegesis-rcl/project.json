@@ -1,7 +1,7 @@
 {
-  "name": "diegesis-rcl",
+  "name": "bouquet-picker",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/diegesis-rcl/src",
+  "sourceRoot": "apps/bouquet-picker/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -9,7 +9,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/diegesis-rcl"
+        "outputPath": "dist/apps/bouquet-picker"
       },
       "configurations": {
         "development": {
@@ -24,15 +24,15 @@
       "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "diegesis-rcl:build"
+        "buildTarget": "bouquet-picker:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "diegesis-rcl:build:development",
+          "buildTarget": "bouquet-picker:build:development",
           "hmr": true
         },
         "production": {
-          "buildTarget": "diegesis-rcl:build:production",
+          "buildTarget": "bouquet-picker:build:production",
           "hmr": false
         }
       }
@@ -41,14 +41,14 @@
       "executor": "@nx/vite:preview-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "diegesis-rcl:build"
+        "buildTarget": "bouquet-picker:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "diegesis-rcl:build:development"
+          "buildTarget": "bouquet-picker:build:development"
         },
         "production": {
-          "buildTarget": "diegesis-rcl:build:production"
+          "buildTarget": "bouquet-picker:build:production"
         }
       }
     },
@@ -57,14 +57,14 @@
       "outputs": ["{options.reportsDirectory}"],
       "options": {
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/apps/diegesis-rcl"
+        "reportsDirectory": "../../coverage/apps/bouquet-picker"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/diegesis-rcl/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/bouquet-picker/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },
