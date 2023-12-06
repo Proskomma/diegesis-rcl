@@ -1,5 +1,5 @@
 .container {
-    width: 6rem;
+    min-width: 6rem;
     border-right: 1px solid #edf2f4;
 }
 
@@ -10,6 +10,7 @@
     cursor: pointer;
 }
 
-.container li:hover, .container li.selected {
+.container li:hover,
+.container li.selected {
     background: #90e0ef;
 }

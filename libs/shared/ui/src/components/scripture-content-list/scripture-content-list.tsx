@@ -2,7 +2,7 @@
 import styles from './scripture-content-list.module.css';
 import type {
   ScriptureContentGroup,
-  ScriptureContentTitle,
+  ScriptureContentLocalLabel,
   ScriptureContent,
 } from '@diegesis-rcl/scripture-content-picker-interfaces';
 
@@ -16,11 +16,13 @@ export function ScriptureContentList({ group }: ScriptureContentListProps) {
   return (
     <div className={styles['container']}>
       {Object.entries(group).map(
-        ([title, content]: [ScriptureContentTitle, ScriptureContent]) => (
+        ([localLabel, content]: [
+          ScriptureContentLocalLabel,
+          ScriptureContent
+        ]) => (
           <ScriptureContentListItem
-            title={title}
-            content={content}
-            key={title}
+            content={{ ...content, localLabel }}
+            key={localLabel}
           />
         )
       )}

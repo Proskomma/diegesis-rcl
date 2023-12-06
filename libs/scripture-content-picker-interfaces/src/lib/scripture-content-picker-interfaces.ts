@@ -10,12 +10,46 @@ export type ScriptureContent = {
     type: ScriptureContentSrcType;
     path?: string;
     url?: string;
-  },
+  };
   books: string[];
-}
+};
 
-export type ScriptureContentTitle = string;
-export type ScriptureContentGroup = Record<ScriptureContentTitle, ScriptureContent>;
+export type ScriptureContentMetaExcludeTypeInfo = ScriptureContent & {
+  localLabel: ScriptureContentLocalLabel;
+};
+export type ScriptureContentMeta = ScriptureContentMetaExcludeTypeInfo & {
+  contentType: ScriptureContentType;
+};
+
+export type ScriptureContentDetail = ScriptureContentMeta & {
+  data: string;
+};
+
+export type ScriptureContentLocalLabel = string;
+export type ScriptureContentGroup = Record<
+  ScriptureContentLocalLabel,
+  ScriptureContent
+>;
 
 export type ScriptureContentType = string;
-export type ScriptureSource = Record<ScriptureContentType, ScriptureContentGroup>;
+export type ScriptureSource = Record<
+  ScriptureContentType,
+  ScriptureContentGroup
+>;
+
+export type ScriptureContentPickerError = unknown;
+
+export type ScriptureContentPickerCallback = (
+  content: ScriptureContentDetail,
+  error: ScriptureContentPickerError | null
+) => unknown;
+
+export type ScriptureContentSourceGroup = Record<
+  ScriptureContentLocalLabel,
+  string
+>;
+
+export type ScriptureSourceContent = Record<
+  ScriptureContentType,
+  ScriptureContentSourceGroup
+>;

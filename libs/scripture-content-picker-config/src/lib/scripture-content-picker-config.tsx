@@ -1,45 +1,155 @@
-import { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import {
   ScriptureSource,
+  ScriptureContent,
   ScriptureContentType,
   ScriptureContentGroup,
+  ScriptureContentMeta,
+  ScriptureContentLocalLabel,
+  ScriptureContentMetaExcludeTypeInfo,
 } from '@diegesis-rcl/scripture-content-picker-interfaces';
+
 import {
   ScriptureContentTypeMenu,
   ScriptureContentList,
+  ScriptureContentEditModal,
+  ScriptureSourceContext,
+  ContentContext,
+  ContentContextProvider,
+  ComponentTypeContext,
 } from '@diegesis-rcl/shared-ui';
+
 import styles from './scripture-content-picker-config.module.css';
 import AddIcon from './add-icon';
 
 /* eslint-disable-next-line */
 export interface ScriptureContentPickerConfigProps {
   source: ScriptureSource;
+  setSource: React.Dispatch<React.SetStateAction<ScriptureSource>>;
 }
 
-export function ScriptureContentPickerConfig({
-  source,
-}: ScriptureContentPickerConfigProps) {
-  const contentTypes = Object.keys(source);
-  const [contentType, setContentType] = useState<ScriptureContentType>();
-  const scriptureContentGroup: ScriptureContentGroup = contentType
-    ? source[contentType]
-    : {};
+function isScriptureSource(
+  source: ScriptureSource | undefined
+): source is ScriptureSource {
+  return source !== undefined;
+}
+
+interface ConfigComponentProps {}
+
+// eslint-disable-next-line no-empty-pattern
+export function ConfigComponent({}: ConfigComponentProps) {
+  const { source } = useContext(ScriptureSourceContext);
+  const contentTypes = isScriptureSource(source) ? Object.keys(source) : [];
+  const { contentType, changeContentType } = useContext(ContentContext);
+
+  const scriptureContentGroup: ScriptureContentGroup =
+    contentType && isScriptureSource(source) ? source[contentType] : {};
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const initialState: ScriptureContentMetaExcludeTypeInfo = {
+    localLabel: '',
+    description: '',
+    language: '',
+    src: {
+      type: 'fs',
+    },
+    books: [],
+  };
+
+  function openModal() {
+    setIsOpen(true);
+  }
 
   return (
     <div className={styles['container']}>
       <ScriptureContentTypeMenu
         items={contentTypes}
-        onSelectMenuItem={setContentType}
+        onSelectMenuItem={changeContentType}
         selectedItem={contentType}
       />
       <div className={styles['list-wrap']}>
-        <ScriptureContentList group={scriptureContentGroup} />
-        <div className={styles['btn-wrap']}>
-          <AddIcon />
-        </div>
+        {contentType && <ScriptureContentList group={scriptureContentGroup} />}
+        {contentType && (
+          <div className={styles['btn-wrap']}>
+            <span
+              onClick={() => {
+                openModal();
+              }}
+            >
+              <AddIcon />
+            </span>
+          </div>
+        )}
       </div>
+      {contentType && (
+        <ScriptureContentEditModal
+          isOpen={modalIsOpen}
+          setIsOpen={setIsOpen}
+          initialState={initialState}
+        />
+      )}
     </div>
+  );
+}
+
+export function ScriptureContentPickerConfig({
+  source,
+  setSource,
+}: ScriptureContentPickerConfigProps) {
+  const addContent = (
+    content: ScriptureContentMeta,
+    prevContent: ScriptureContentMetaExcludeTypeInfo
+  ) => {
+    setSource((prev) => {
+      const copy: ScriptureContent & {
+        localLabel?: string;
+        contentType?: string;
+      } = { ...content };
+      delete copy.localLabel;
+      delete copy.contentType;
+
+      const newContentGroup = Object.fromEntries(
+        Object.entries(prev[content.contentType]).filter(
+          ([key]) => key !== prevContent.localLabel
+        )
+      );
+
+      return {
+        ...prev,
+        [content.contentType]: {
+          ...newContentGroup,
+          [content.localLabel as ScriptureContentLocalLabel]:
+            copy as ScriptureContent,
+        },
+      };
+    });
+  };
+
+  const removeContent = (
+    contentType: ScriptureContentType,
+    localLabel: ScriptureContentLocalLabel
+  ) => {
+    setSource((prev) => {
+      const copy: ScriptureContentGroup = { ...prev[contentType] };
+      delete copy[localLabel];
+      return {
+        ...prev,
+        [contentType]: copy,
+      };
+    });
+  };
+
+  return (
+    <ComponentTypeContext.Provider value="config">
+      <ContentContextProvider>
+        <ScriptureSourceContext.Provider
+          value={{ source, addContent, removeContent }}
+        >
+          <ConfigComponent />
+        </ScriptureSourceContext.Provider>
+      </ContentContextProvider>
+    </ComponentTypeContext.Provider>
   );
 }
 

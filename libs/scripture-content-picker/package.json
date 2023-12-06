@@ -1,5 +1,5 @@
 {
-  "name": "@diegesis-rcl/shared-ui",
+  "name": "@diegesis-rcl/scripture-content-picker",
   "version": "0.0.1",
   "main": "./index.js",
   "types": "./index.d.ts",
@@ -8,9 +8,5 @@
       "import": "./index.mjs",
       "require": "./index.js"
     }
-  },
-  "dependencies": {
-    "@types/react-modal": "^3.16.3",
-    "react-modal": "^3.16.1"
   }
 }

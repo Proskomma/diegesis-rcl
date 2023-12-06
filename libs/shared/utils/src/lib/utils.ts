@@ -1,8 +1,27 @@
-export function utils(): string {
-  return 'utils';
+export function isBrowser(): boolean {
+  // Check if the environment is Node.js
+  if (typeof process === 'object' && typeof require === 'function') {
+    return false;
+  }
+
+  // Check if the environment is a
+  // Service worker
+  // if (importScripts && typeof importScripts === 'function') {
+  //   return false;
+  // }
+
+  // Check if the environment is a Browser
+  if (typeof window === 'object') {
+    return true;
+  }
+
+  return false;
 }
 
-export function darkenHexColor(hexColor: string, darknessPercentage: number): string {
+export function darkenHexColor(
+  hexColor: string,
+  darknessPercentage: number
+): string {
   // Convert hex color to RGB
   const red = parseInt(hexColor.substring(1, 3), 16);
   const green = parseInt(hexColor.substring(3, 5), 16);
@@ -19,7 +38,8 @@ export function darkenHexColor(hexColor: string, darknessPercentage: number): st
   const darkenedHexBlue = darkenedBlue.toString(16).padStart(2, '0');
 
   // Combine darkened hex components
-  const darkenedHexColor = '#' + darkenedHexRed + darkenedHexGreen + darkenedHexBlue;
+  const darkenedHexColor =
+    '#' + darkenedHexRed + darkenedHexGreen + darkenedHexBlue;
 
   return darkenedHexColor;
 }
