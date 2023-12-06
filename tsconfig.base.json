@@ -14,7 +14,16 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@diegesis-rcl/ScriptureConentPickerConfig": [
+        "libs/scripture-content-picker-config/src/index.ts"
+      ],
+      "@diegesis-rcl/scripture-content-picker-interfaces": [
+        "libs/scripture-content-picker-interfaces/src/index.ts"
+      ],
+      "@diegesis-rcl/shared-ui": ["libs/shared/ui/src/index.ts"],
+      "@diegesis-rcl/utils": ["libs/shared/utils/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

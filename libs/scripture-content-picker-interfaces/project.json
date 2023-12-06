@@ -1,0 +1,29 @@
+{
+  "name": "scripture-content-picker-interfaces",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/scripture-content-picker-interfaces/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/scripture-content-picker-interfaces",
+        "main": "libs/scripture-content-picker-interfaces/src/index.ts",
+        "tsConfig": "libs/scripture-content-picker-interfaces/tsconfig.lib.json",
+        "assets": ["libs/scripture-content-picker-interfaces/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/scripture-content-picker-interfaces/**/*.ts",
+          "libs/scripture-content-picker-interfaces/package.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
