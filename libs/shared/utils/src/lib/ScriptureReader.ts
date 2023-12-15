@@ -46,7 +46,6 @@ export class ScriptureFSReader extends ScriptureReader {
         const data = await electron.readFile(content.src.path as string, {
           encoding: 'utf8',
         });
-        console.log('read data====<', data);
         callback({ ...content, data: data as string }, null);
       }
     } catch (error) {
