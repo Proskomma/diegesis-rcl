@@ -15,7 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@diegesis-rcl/ScriptureConentPickerConfig": [
+      "@diegesis-rcl/scripture-content-picker": [
+        "libs/scripture-content-picker/src/index.ts"
+      ],
+      "@diegesis-rcl/scripture-content-picker-config": [
         "libs/scripture-content-picker-config/src/index.ts"
       ],
       "@diegesis-rcl/scripture-content-picker-interfaces": [

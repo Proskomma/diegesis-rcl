@@ -1,4 +1,9 @@
 /* Your styles goes here. */
+.picker-container {
+    width: 600px;
+    height: 400px;
+}
+
 .picker-config-container {
     width: 600px;
     height: 400px;

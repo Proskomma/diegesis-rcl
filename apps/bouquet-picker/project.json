@@ -24,7 +24,8 @@
       "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "bouquet-picker:build"
+        "buildTarget": "bouquet-picker:build",
+        "proxyConfig": "apps/bouquet-picker/proxy.conf.json"
       },
       "configurations": {
         "development": {

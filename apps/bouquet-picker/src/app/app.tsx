@@ -1,11 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './app.module.css';
 
-import { ScriptureContentPickerConfig } from '@diegesis-rcl/ScriptureConentPickerConfig';
-import { ScriptureSource } from '@diegesis-rcl/scripture-content-picker-interfaces';
+import { ScriptureContentPickerConfig } from '@diegesis-rcl/scripture-content-picker-config';
+import { ScriptureContentPicker } from '@diegesis-rcl/scripture-content-picker';
 
-import NxWelcome from './nx-welcome';
+import {
+  ScriptureSource,
+  ScriptureContentDetail,
+  ScriptureContentPickerError,
+  ScriptureSourceContent,
+} from '@diegesis-rcl/scripture-content-picker-interfaces';
 
 const defaultSource: ScriptureSource = {
   bible: {
@@ -14,7 +19,7 @@ const defaultSource: ScriptureSource = {
       language: 'en',
       src: {
         type: 'fs',
-        path: '/home/mark/Documents/bibles/myBible2469/',
+        path: '/home/user/Documents/Proskomma/test.txt',
       },
       books: ['GEN', 'EXO', 'LEV'],
     },
@@ -23,7 +28,7 @@ const defaultSource: ScriptureSource = {
       language: 'fr',
       src: {
         type: 'url',
-        url: 'https://www.xenizo.fr/leur_bible_afeswx',
+        url: 'https://git.door43.org/unfoldingWord/en_ult/raw/branch/master/03-LEV.usfm',
       },
       books: ['MRK'],
     },
@@ -44,11 +49,47 @@ const defaultSource: ScriptureSource = {
 
 export function App() {
   const [source, setSource] = useState<ScriptureSource>(defaultSource);
+  const [sourceContent, setSourceContent] = useState<ScriptureSourceContent>(
+    {}
+  );
+
+  const handleSelect = (
+    content: ScriptureContentDetail,
+    error: ScriptureContentPickerError
+  ) => {
+    if (!error) {
+      setSourceContent((prev) => {
+        return {
+          ...prev,
+          [content.contentType]: {
+            ...prev[content.contentType],
+            [content.localLabel]: content.data,
+          },
+        };
+      });
+    } else {
+      console.warn('got error while fetching==>', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log('useffect sourceContent==>', sourceContent);
+  }, [sourceContent]);
 
   return (
-    <div className={styles['picker-config-container']}>
-      <ScriptureContentPickerConfig source={source} />
-      {/* <NxWelcome title="bouquet-picker" /> */}
+    <div>
+      <div>
+        <h4>ScriptureContentPickerConfig</h4>
+        <div className={styles['picker-config-container']}>
+          <ScriptureContentPickerConfig source={source} setSource={setSource} />
+        </div>
+      </div>
+      <div>
+        <h4>ScriptureContentPicker</h4>
+        <div className={styles['picker-container']}>
+          <ScriptureContentPicker source={source} onSelect={handleSelect} />
+        </div>
+      </div>
     </div>
   );
 }
