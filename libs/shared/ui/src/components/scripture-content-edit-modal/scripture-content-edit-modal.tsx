@@ -1,8 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 
 import {
   ScriptureContentSrcType,
   ScriptureContentMetaExcludeTypeInfo,
+  ScriptureContentType,
 } from '@diegesis-rcl/scripture-content-picker-interfaces';
 import styles from './scripture-content-edit-modal.module.css';
 import Modal from 'react-modal';
@@ -10,6 +11,10 @@ import {
   ContentContext,
   ScriptureSourceContext,
 } from '../../contexts/scripture-content-picker-context';
+import {
+  windowsPathValidation,
+  linuxPathValidation,
+} from '@diegesis-rcl/utils';
 
 /* eslint-disable-next-line */
 export interface ScriptureContentEditModalProps {
@@ -34,14 +39,21 @@ export function ScriptureContentEditModal({
   isOpen,
   setIsOpen,
 }: ScriptureContentEditModalProps) {
-  const { contentType } = useContext(ContentContext);
+  const contentType = useContext(ContentContext)
+    .contentType as ScriptureContentType;
   const { addContent } = useContext(ScriptureSourceContext);
   const [scriptureContent, setScriptureContent] =
     useState<ScriptureContentMetaExcludeTypeInfo>(initialState);
 
+  useEffect(() => {
+    setScriptureContent(initialState);
+  }, [initialState]);
+
   function closeModal() {
     setIsOpen(false);
   }
+
+  const srcRef = React.useRef<HTMLInputElement>(null);
 
   function handleChange(
     event: React.ChangeEvent<
@@ -56,14 +68,34 @@ export function ScriptureContentEditModal({
         },
       }));
     } else if (event.target.name === 'source') {
-      setScriptureContent((prev) => ({
-        ...prev,
-        src: {
-          type: prev.src.type as ScriptureContentSrcType,
-          path: prev.src.type === 'fs' ? event.target.value : undefined,
-          url: prev.src.type === 'url' ? event.target.value : undefined,
-        },
-      }));
+      setScriptureContent((prev: ScriptureContentMetaExcludeTypeInfo) => {
+        return {
+          ...prev,
+          src: {
+            type: prev.src.type as ScriptureContentSrcType,
+            path: prev.src.type === 'fs' ? event.target.value : undefined,
+            url: prev.src.type === 'url' ? event.target.value : undefined,
+          },
+        };
+      });
+      if (scriptureContent.src.type === 'fs') {
+        const winPathValid = windowsPathValidation(event.target.value);
+        const linuxPathValid = linuxPathValidation(event.target.value);
+        if (!winPathValid && !linuxPathValid)
+          srcRef.current?.setCustomValidity('Please fill correct path!');
+        else srcRef.current?.setCustomValidity('');
+      }
+
+      if (scriptureContent.src.type === 'url') {
+        const httpRegex =
+          // eslint-disable-next-line no-useless-escape
+          /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+        if (!httpRegex.test(event.target.value))
+          srcRef.current?.setCustomValidity('Please fill correct url!');
+        else srcRef.current?.setCustomValidity('');
+      }
+
+      srcRef.current?.reportValidity();
     } else {
       setScriptureContent((prev) => ({
         ...prev,
@@ -74,7 +106,7 @@ export function ScriptureContentEditModal({
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (!contentType) return;
+
     addContent &&
       addContent({ ...scriptureContent, contentType }, initialState);
     setScriptureContent(initialState);
@@ -156,6 +188,8 @@ export function ScriptureContentEditModal({
                 <input
                   type="text"
                   name="source"
+                  ref={srcRef}
+                  required
                   value={
                     (scriptureContent.src.type === 'fs'
                       ? scriptureContent.src.path
@@ -167,7 +201,9 @@ export function ScriptureContentEditModal({
             </div>
           </div>
           <div className={styles['form_content_btn-wrap']}>
-            <button type="submit">Add</button>
+            <button type="submit">
+              {initialState.localLabel === '' ? 'Add' : 'Save'}
+            </button>
           </div>
         </div>
       </form>
