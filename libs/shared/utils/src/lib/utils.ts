@@ -43,3 +43,37 @@ export function darkenHexColor(
 
   return darkenedHexColor;
 }
+
+export function windowsPathValidation(path: string): boolean {
+  if (
+    path.charAt(0) != '\\' ||
+    path.charAt(1) != '\\' ||
+    path.charAt(0) != '/' ||
+    path.charAt(1) != '/'
+  ) {
+    if (!path.charAt(0).match(/^[a-zA-Z]/)) {
+      return false;
+    }
+    // eslint-disable-next-line no-useless-escape
+    if (!path.charAt(1).match(/^[:]/) || !path.charAt(2).match(/^[\/\\]/)) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+export function linuxPathValidation(path: string): boolean {
+  for (let k = 0; k < path.length; k++) {
+    if (path.charAt(k).match(/^[\\]$/)) {
+      return false;
+    }
+  }
+  if (path.charAt(0) != '/') {
+    return false;
+  }
+  if (path.charAt(0) == '/' && path.charAt(1) == '/') {
+    return false;
+  }
+  return true;
+}

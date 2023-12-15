@@ -68,13 +68,17 @@ export function App() {
         };
       });
     } else {
-      console.warn('got error while fetching==>', error);
+      console.error('got error while fetching==>', error);
     }
   };
 
   useEffect(() => {
     console.log('useffect sourceContent==>', sourceContent);
   }, [sourceContent]);
+
+  useEffect(() => {
+    console.log('useeffect source==>', source);
+  }, [source])
 
   return (
     <div>
