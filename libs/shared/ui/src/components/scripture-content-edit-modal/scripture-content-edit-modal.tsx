@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 
 import {
   ScriptureContentSrcType,
@@ -15,6 +15,7 @@ import {
   windowsPathValidation,
   linuxPathValidation,
 } from '@diegesis-rcl/utils';
+import MultipleInput from '../multiple-input/multiple-input';
 
 /* eslint-disable-next-line */
 export interface ScriptureContentEditModalProps {
@@ -45,21 +46,21 @@ export function ScriptureContentEditModal({
   const [scriptureContent, setScriptureContent] =
     useState<ScriptureContentMetaExcludeTypeInfo>(initialState);
 
+  const srcRef = React.useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     setScriptureContent(initialState);
   }, [initialState]);
 
-  function closeModal() {
+  const closeModal = () => {
     setIsOpen(false);
   }
 
-  const srcRef = React.useRef<HTMLInputElement>(null);
-
-  function handleChange(
+  const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
-  ) {
+  ) => {
     if (event.target.name === 'type') {
       setScriptureContent((prev) => ({
         ...prev,
@@ -104,7 +105,25 @@ export function ScriptureContentEditModal({
     }
   }
 
-  function handleSubmit(event: React.FormEvent) {
+  const handleAddNewBook = useCallback((book: string) => {
+    setScriptureContent((prev) => {
+      return {
+        ...prev,
+        books: [...prev.books.filter((item) => item !== book), book],
+      };
+    });
+  }, []);
+
+  const handleDeleteBook = useCallback((book: string) => {
+    setScriptureContent((prev) => {
+      return {
+        ...prev,
+        books: [...prev.books.filter((item) => item !== book)],
+      };
+    });
+  }, []);
+
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     addContent &&
@@ -149,6 +168,14 @@ export function ScriptureContentEditModal({
                   value={scriptureContent.description}
                   onChange={handleChange}
                 />
+              </div>
+            </div>
+            <div>
+              <div>
+                <label>Books:</label>
+              </div>
+              <div>
+                <MultipleInput placeholder='Add More Books' states={scriptureContent.books} onAddState={handleAddNewBook} onDeleteState={handleDeleteBook} />
               </div>
             </div>
             <div>
