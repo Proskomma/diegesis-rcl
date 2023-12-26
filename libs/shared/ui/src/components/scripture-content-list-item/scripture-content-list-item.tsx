@@ -13,6 +13,7 @@ import type {
 } from '@diegesis-rcl/scripture-content-picker-interfaces';
 
 import { ScriptureContentEditModal } from '../scripture-content-edit-modal/scripture-content-edit-modal';
+import { ScriptureContentConfirmModal } from '../scripture-content-confirm-modal/scripture-content-confirm-modal';
 import {
   ContentContext,
   ScriptureSourceContext,
@@ -44,7 +45,8 @@ export function ScriptureContentListItem({
     src: { url, path },
   } = content;
 
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const handleClick = async (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -52,20 +54,32 @@ export function ScriptureContentListItem({
     await fetch();
   };
 
+  const handleCancelAction = () => {
+    setIsConfirmModalOpen(false);
+  };
+
+  const handleConfirmAction = () => {
+    removeContent &&
+      removeContent(contentType as ScriptureContentType, content.localLabel);
+  };
+
   return (
-    <div className={`${styles['container']} ${styles[componentType]}`} onClick={handleClick}>
+    <div
+      className={`${styles['container']} ${styles[componentType]}`}
+      onClick={handleClick}
+    >
       <div className={styles['labels']}>
         <p className={styles['local-label']}>{content.localLabel}</p>
         <p>
           {description} &#40; {language} &#41;
         </p>
-        <p>
+        <div className={styles['tags-list']}>
           {books.map((book) => (
             <Tag color="#cbc3e3" key={book}>
               {book}
             </Tag>
           ))}
-        </p>
+        </div>
         {path && <p>Local FS: {path}</p>}
         {url && <p>URL: {url}</p>}
       </div>
@@ -73,18 +87,14 @@ export function ScriptureContentListItem({
         <div className={styles['btn-group']}>
           <span
             onClick={() => {
-              removeContent &&
-                removeContent(
-                  contentType as ScriptureContentType,
-                  content.localLabel
-                );
+              setIsConfirmModalOpen(true);
             }}
           >
             <DeleteIcon />
           </span>
           <span
             onClick={() => {
-              setIsOpen(true);
+              setIsEditModalOpen(true);
             }}
           >
             <EditIcon />
@@ -93,10 +103,19 @@ export function ScriptureContentListItem({
       )}
 
       <ScriptureContentEditModal
-        isOpen={modalIsOpen}
-        setIsOpen={setIsOpen}
+        isOpen={isEditModalOpen}
+        setIsOpen={setIsEditModalOpen}
         initialState={{ ...content }}
       />
+      <ScriptureContentConfirmModal
+        isOpen={isConfirmModalOpen}
+        setIsOpen={setIsConfirmModalOpen}
+        onCancel={handleCancelAction}
+        onConfirm={handleConfirmAction}
+        title="Delete Content"
+        message="Are you sure to delete this item?"
+      />
+
       <Spinner show={loading} />
     </div>
   );
