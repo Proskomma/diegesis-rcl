@@ -109,20 +109,44 @@ export function ScriptureContentPickerConfig({
       delete copy.localLabel;
       delete copy.contentType;
 
-      const newContentGroup = Object.fromEntries(
-        Object.entries(prev[content.contentType]).filter(
-          ([key]) => key !== prevContent.localLabel
-        )
-      );
+      const exists = Object.entries(prev[content.contentType])
+        .filter(([key]) => key === prevContent.localLabel);
 
-      return {
-        ...prev,
-        [content.contentType]: {
-          ...newContentGroup,
-          [content.localLabel as ScriptureContentLocalLabel]:
-            copy as ScriptureContent,
-        },
-      };
+      if (exists.length > 0) {
+        const newContentGroup = Object.fromEntries(
+          Object.entries(prev[content.contentType]).map(
+            (entry) => {
+              if (entry[0] !== prevContent.localLabel) {
+                return entry;
+              } else {
+                return [entry[0], copy as ScriptureContent];
+              }
+            }
+          )
+        );
+
+        return {
+          ...prev,
+          [content.contentType]: {
+            ...newContentGroup,
+          },
+        };
+      } else {
+        const newContentGroup = Object.fromEntries(
+          Object.entries(prev[content.contentType]).filter(
+            ([key]) => key !== prevContent.localLabel
+          )
+        );
+
+        return {
+          ...prev,
+          [content.contentType]: {
+            ...newContentGroup,
+            [content.localLabel as ScriptureContentLocalLabel]:
+              copy as ScriptureContent,
+          },
+        };
+      }
     });
   };
 
