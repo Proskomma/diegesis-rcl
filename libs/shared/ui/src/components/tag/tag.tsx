@@ -8,7 +8,7 @@ export interface TagProps {
 }
 
 export function Tag({ color, children }: TagProps) {
-  const darkColor: string = darkenHexColor(color, 0.3);
+  const darkColor: string = darkenHexColor(color, 0.7);
   return (
     <span
       className={styles['container']}

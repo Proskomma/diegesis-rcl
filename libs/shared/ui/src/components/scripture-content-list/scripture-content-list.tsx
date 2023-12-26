@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import styles from './scripture-content-list.module.css';
 import type {
@@ -13,9 +14,19 @@ export interface ScriptureContentListProps {
 }
 
 export function ScriptureContentList({ group }: ScriptureContentListProps) {
+  const entries = useMemo(() => Object.entries(group).sort((item1, item2) => {
+    if (item1[0] > item2[0]) {
+      return 1;
+    } else if (item1[0] < item2[0]) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }), [group]);
+  
   return (
     <div className={styles['container']}>
-      {Object.entries(group).map(
+      {entries.map(
         ([localLabel, content]: [
           ScriptureContentLocalLabel,
           ScriptureContent
