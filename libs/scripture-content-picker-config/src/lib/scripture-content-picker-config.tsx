@@ -119,7 +119,7 @@ export function ScriptureContentPickerConfig({
               if (entry[0] !== prevContent.localLabel) {
                 return entry;
               } else {
-                return [entry[0], copy as ScriptureContent];
+                return [content.localLabel, copy as ScriptureContent];
               }
             }
           )

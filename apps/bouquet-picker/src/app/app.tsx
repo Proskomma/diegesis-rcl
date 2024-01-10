@@ -57,6 +57,8 @@ export function App() {
     content: ScriptureContentDetail,
     error: ScriptureContentPickerError
   ) => {
+    console.log('handleSelect ==>', {content, error});
+
     if (!error) {
       setSourceContent((prev) => {
         return {
