@@ -4,6 +4,12 @@ import {
 } from '@diegesis-rcl/scripture-content-picker-interfaces';
 import { isBrowser } from './utils';
 
+declare global {
+  interface Window { electron: any; }
+}
+
+window.electron = window.electron || {};
+
 export abstract class ScriptureReader {
   abstract read(
     content: ScriptureContentMeta,
@@ -42,8 +48,8 @@ export class ScriptureFSReader extends ScriptureReader {
     }
 
     try {
-      if (electron) {
-        const data = await electron.readFile(content.src.path as string, {
+      if (window.electron) {
+        const data = await window.electron.readFile(content.src.path as string, {
           encoding: 'utf8',
         });
         callback({ ...content, data: data as string }, null);
